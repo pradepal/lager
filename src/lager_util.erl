@@ -210,14 +210,19 @@ maybe_utc({Date, {H, M, S, Ms}}) ->
 rotate_logfile(File, 0) ->
     file:delete(File);
 rotate_logfile(File, 1) ->
-    case file:rename(File, File++".0") of
+    File1 = File++".0",
+    case file:rename(File, File1) of
         ok ->
+	    _ = file:change_mode(File1,8#0777),
             ok;
         _ ->
             rotate_logfile(File, 0)
     end;
 rotate_logfile(File, Count) ->
-    _ = file:rename(File ++ "." ++ integer_to_list(Count - 2), File ++ "." ++ integer_to_list(Count - 1)),
+    File1 = File ++ "." ++ integer_to_list(Count - 2),
+    File2 = File ++ "." ++ integer_to_list(Count - 1),
+    _ = file:rename(File1, File2),
+    _ = file:change_mode(File2,8#0777),
     rotate_logfile(File, Count - 1).
 
 format_time() ->
