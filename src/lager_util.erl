@@ -208,17 +208,7 @@ maybe_utc({Date, {H, M, S, Ms}}) ->
 
 %% renames failing are OK
 rotate_logfile(File, 0) ->
-%%file:delete(File);
-%% open the file in write-only mode to truncate/create it
-    case file:open(File, [write]) of
-	{ok, FD} ->
-	        _ = file:close(FD),
-		_ = file:close(FD),
-		ok;
-	Error ->
-		Error
-    end,
-    _ = file:change_mode(File,8#0666);
+    file:delete(File);
 rotate_logfile(File, 1) ->
     File1 = File++".0",
     case file:rename(File, File1) of
