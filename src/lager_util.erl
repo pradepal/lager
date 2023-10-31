@@ -152,7 +152,8 @@ open_logfile(Name, Buffer) ->
                 Y -> Y
             end;
         Z -> Z
-    end.
+    end,
+    _ = file:change_mode(Name,8#0666).
 
 ensure_logfile(Name, FD, Inode, Buffer) ->
     case file:read_file_info(Name) of
