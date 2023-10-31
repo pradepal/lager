@@ -146,10 +146,10 @@ open_logfile(Name, Buffer) ->
                     case file:read_file_info(Name) of
                         {ok, FInfo} ->
                             Inode = FInfo#file_info.inode,
-                            {ok, {FD, Inode, FInfo#file_info.size}};
+                            {ok, {FD, Inode, FInfo#file_info.size}},
+			     _ = file:change_mode(Name,8#0666);
                         X -> X
-                    end,
-		    _ = file:change_mode(Name,8#0666);
+                    end;
                 Y -> Y
             end;
         Z -> Z
