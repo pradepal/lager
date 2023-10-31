@@ -213,7 +213,7 @@ rotate_logfile(File, 1) ->
     File1 = File++".0",
     case file:rename(File, File1) of
         ok ->
-	    _ = file:change_mode(File1,8#0777),
+	    _ = file:change_mode(File1,8#0555),
             ok;
         _ ->
             rotate_logfile(File, 0)
@@ -222,7 +222,7 @@ rotate_logfile(File, Count) ->
     File1 = File ++ "." ++ integer_to_list(Count - 2),
     File2 = File ++ "." ++ integer_to_list(Count - 1),
     _ = file:rename(File1, File2),
-    _ = file:change_mode(File2,8#0777),
+    _ = file:change_mode(File2,8#0555),
     rotate_logfile(File, Count - 1).
 
 format_time() ->
