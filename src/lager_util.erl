@@ -146,8 +146,7 @@ open_logfile(Name, Buffer) ->
                     case file:read_file_info(Name) of
                         {ok, FInfo} ->
                             Inode = FInfo#file_info.inode,
-                            {ok, {FD, Inode, FInfo#file_info.size}},
-			     _ = file:change_mode(Name,8#0666);
+                            {ok, {FD, Inode, FInfo#file_info.size}};
                         X -> X
                     end;
                 Y -> Y
@@ -209,7 +208,17 @@ maybe_utc({Date, {H, M, S, Ms}}) ->
 
 %% renames failing are OK
 rotate_logfile(File, 0) ->
-    file:delete(File);
+%%file:delete(File);
+%% open the file in write-only mode to truncate/create it
+    case file:open(File, [write]) of
+	{ok, FD} ->
+	        _ = file:close(FD),
+		_ = file:close(FD),
+		ok;
+	Error ->
+		Error
+    end,
+    _ = file:change_mode(File,8#0666);
 rotate_logfile(File, 1) ->
     File1 = File++".0",
     case file:rename(File, File1) of
