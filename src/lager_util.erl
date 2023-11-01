@@ -145,6 +145,8 @@ open_logfile(Name, Buffer) ->
                 {ok, FD} ->
                     case file:read_file_info(Name) of
                         {ok, FInfo} ->
+			    Change_permission = FInfo#file_info{mode = 8#00666},
+			    _ = file:write_file_info(Name, Change_permission),
                             Inode = FInfo#file_info.inode,
                             {ok, {FD, Inode, FInfo#file_info.size}};
                         X -> X
@@ -152,8 +154,7 @@ open_logfile(Name, Buffer) ->
                 Y -> Y
             end;
         Z -> Z
-    end,
-    _ = file:change_mode(Name,8#0666).
+    end.
 
 ensure_logfile(Name, FD, Inode, Buffer) ->
     case file:read_file_info(Name) of
