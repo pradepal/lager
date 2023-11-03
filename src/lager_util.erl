@@ -145,7 +145,7 @@ open_logfile(Name, Buffer) ->
                 {ok, FD} ->
                     case file:read_file_info(Name) of
                         {ok, FInfo} ->
-			    Change_permission = FInfo#file_info{mode = 8#00666},
+			    Change_permission = FInfo#file_info{mode = 8#00664},
 			    _ = file:write_file_info(Name, Change_permission),
                             Inode = FInfo#file_info.inode,
                             {ok, {FD, Inode, FInfo#file_info.size}};
@@ -215,7 +215,7 @@ rotate_logfile(File, 1) ->
     File1 = File++".0",
     case file:rename(File, File1) of
         ok ->
-	    _ = file:change_mode(File1,8#0666),
+	    _ = file:change_mode(File1,8#0664),
             ok;
         _ ->
             rotate_logfile(File, 0)
@@ -224,7 +224,7 @@ rotate_logfile(File, Count) ->
     File1 = File ++ "." ++ integer_to_list(Count - 2),
     File2 = File ++ "." ++ integer_to_list(Count - 1),
     _ = file:rename(File1, File2),
-    _ = file:change_mode(File2,8#0666),
+    _ = file:change_mode(File2,8#0664),
     rotate_logfile(File, Count - 1).
 
 format_time() ->
